@@ -1,0 +1,173 @@
+
+services:
+  opensearch-node1:
+    image: opensearchproject/opensearch:latest
+    container_name: node1
+    environment:
+    
+      - cluster.name=vtb
+      - node.name=node1
+      - node.roles=cluster_manager
+      - network.bind_host=0.0.0.0
+      - discovery.seed_hosts=node1,node2,node3
+      - cluster.initial_cluster_manager_nodes=node1,node2,node3
+      - cluster.routing.allocation.awareness.attributes=zone
+      - cluster.routing.allocation.awareness.force.zone.values=vtb-zoneA,vtb-zoneB
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true" # Prevents execution of bundled demo script which installs demo certificates and security configurations to OpenSearch
+      - "DISABLE_SECURITY_PLUGIN=true" # Disables Security plugin
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./performance-analyzer-config:/usr/share/opensearch/config/opensearch-performance-analyzer:ro
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - opensearch-net
+
+  opensearch-node2:
+    image: opensearchproject/opensearch:latest
+    container_name: node2
+    environment:
+      - cluster.name=vtb
+      - node.name=node2
+      - node.roles=cluster_manager
+      - network.bind_host=0.0.0.0
+      - discovery.seed_hosts=node1,node2,node3
+      - cluster.initial_cluster_manager_nodes=node1,node2,node3
+      - cluster.routing.allocation.awareness.attributes=zone
+      - cluster.routing.allocation.awareness.force.zone.values=vtb-zoneA,vtb-zoneB
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true" # Prevents execution of bundled demo script which installs demo certificates and security configurations to OpenSearch
+      - "DISABLE_SECURITY_PLUGIN=true" # Disables Security plugin
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./performance-analyzer-config:/usr/share/opensearch/config/opensearch-performance-analyzer:ro
+    ports:
+      - "9201:9200"
+      - "9601:9600"
+    networks:
+      - opensearch-net
+
+  opensearch-node3:
+    image: opensearchproject/opensearch:latest
+    container_name: node3
+    environment:
+      - cluster.name=vtb
+      - node.name=node3
+      - node.roles=cluster_manager
+      - network.bind_host=0.0.0.0
+      - discovery.seed_hosts=node1,node2,node3
+      - cluster.initial_cluster_manager_nodes=node1,node2,node3
+      - cluster.routing.allocation.awareness.attributes=zone
+      - cluster.routing.allocation.awareness.force.zone.values=vtb-zoneA,vtb-zoneB
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true" # Prevents execution of bundled demo script which installs demo certificates and security configurations to OpenSearch
+      - "DISABLE_SECURITY_PLUGIN=true" # Disables Security plugin
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./performance-analyzer-config:/usr/share/opensearch/config/opensearch-performance-analyzer:ro
+    ports:
+      - "9202:9200"
+      - "9602:9600"
+    networks:
+      - opensearch-net
+
+  opensearch-node4:
+    image: opensearchproject/opensearch:latest
+    container_name: node4
+    environment:
+      - cluster.name=vtb
+      - node.name=node4
+      - node.roles=data, ingest
+      - network.bind_host=0.0.0.0
+      - node.attr.zone=vtb-zoneA
+      - discovery.seed_hosts=node1,node2,node3
+      - cluster.routing.allocation.awareness.attributes=zone
+      - cluster.routing.allocation.awareness.force.zone.values=vtb-zoneA,vtb-zoneB
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true" # Prevents execution of bundled demo script which installs demo certificates and security configurations to OpenSearch
+      - "DISABLE_SECURITY_PLUGIN=true" # Disables Security plugin
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./performance-analyzer-config:/usr/share/opensearch/config/opensearch-performance-analyzer:ro
+      - ./opensearch-data4:/usr/share/opensearch/data
+    ports:
+      - "9203:9200"
+      - "9603:9600"
+    networks:
+      - opensearch-net
+
+  opensearch-node5:
+    image: opensearchproject/opensearch:latest
+    container_name: node5
+    environment:
+      - cluster.name=vtb
+      - node.name=node5
+      - node.roles=data, ingest
+      - node.attr.zone=vtb-zoneB
+      - network.bind_host=0.0.0.0
+      - discovery.seed_hosts=node1,node2,node3
+      - cluster.routing.allocation.awareness.attributes=zone
+      - cluster.routing.allocation.awareness.force.zone.values=vtb-zoneA,vtb-zoneB
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true" # Prevents execution of bundled demo script which installs demo certificates and security configurations to OpenSearch
+      - "DISABLE_SECURITY_PLUGIN=true" # Disables Security plugin
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./performance-analyzer-config:/usr/share/opensearch/config/opensearch-performance-analyzer:ro
+      - ./opensearch-data5:/usr/share/opensearch/data
+    ports:
+      - "9204:9200"
+      - "9604:9600"
+    networks:
+      - opensearch-net
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch-node1:9200","http://opensearch-node2:9200"]'
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true" # disables security dashboards plugin in OpenSearch Dashboards
+    networks:
+      - opensearch-net
+
+networks:
+  opensearch-net:
